@@ -1,4 +1,4 @@
-name: ci pipelin
+name: CI Pipeline
 
 on:
   push:
@@ -9,22 +9,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
-      
-      - name: setup node
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: dependancy check
+      - name: Install Dependencies
         run: npm install
 
-      - name: run test
+      - name: Run Tests
         run: npm test
         env:
-          MESSAGE: HELLO FROM CI
+          MESSAGE: Hello from CI
 
-      - name: build docker image 
+      - name: Build Docker Image
         run: docker build -t ci-demo .
-
