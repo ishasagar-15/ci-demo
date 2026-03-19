@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -9,21 +9,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Get code
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # 3️⃣ Install dependencies
       - name: Install Dependencies
         run: npm install
 
+      # 4️⃣ Run tests
       - name: Run Tests
         run: npm test
         env:
-          MESSAGE: Hello from CI
+          MESSAGE: HELLO FROM CI
 
+      # 5️⃣ Build Docker Image
       - name: Build Docker Image
         run: docker build -t ci-demo .
+
+      # 6️⃣ Login to Docker Hub (BEST PRACTICE)
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 7️⃣ Tag Image with Commit SHA
+      - name: Tag Docker Image
+        run: docker tag ci-demo ${{ secrets.DOCKER_USERNAME }}/ci-demo:${{ github.sha }}
+
+      # 8️⃣ Push Image to Docker Hub
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/ci-demo:${{ github.sha }}
